@@ -9,16 +9,29 @@ import http from 'node:http';
 // GET /users => Pegando usuarios do DB
 // POST /users => Criando um usuario no DB
 
+const users = []
+
 const server = http.createServer((req, res) => {
     const { method, url } = req
     console.log(method, url);
     
     if (method === 'GET' & url === '/users') {
-        return res.end("Getting users...")
+
+        return res
+        .setHeader('Content-Type', 'application/json')
+        .writeHead(200)
+        .end(JSON.stringify(users))
     }
     
     if (method === 'POST' & url === '/users') {
-        return res.end("Creating user...")
+        users.push({
+            id: 2,
+            name: "Tiago",
+            age: 22,
+            email: "Tiago2222@gmail.com"
+        })
+
+        return res.writeHead(201).end()
     }
 
     if (method === 'PUT' & url === '/users') {
@@ -36,7 +49,9 @@ const server = http.createServer((req, res) => {
         return res.end("Deleting user...")
     }
 
-    return res.end("Hello World!")
+    return res
+    .writeHead(404)
+    .end('Route not found')
 })
 
 server.listen(3333)
